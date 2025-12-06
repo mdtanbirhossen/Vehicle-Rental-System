@@ -3,7 +3,7 @@ import config from ".";
 
 //DB
 export const pool = new Pool({
-  connectionString: config.connection_string,
+  connectionString: `${config.connection_string}`,
 });
 
 const initDB = async () => {
@@ -12,7 +12,7 @@ const initDB = async () => {
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL CHECK (email = LOWER(email)),
-    password TEXT NOT NULL CHECK (LENGTH(password) >= 6),
+    password TEXT NOT NULL,
     phone VARCHAR(15) NOT NULL,
     role VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'customer'))
     )
