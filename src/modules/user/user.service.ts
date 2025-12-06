@@ -28,7 +28,9 @@ const updateUser = async (id: string, payload: Record<string, unknown>) => {
 
   if (fields.length === 0) return null;
 
-  const query = `UPDATE users SET ${fields.join(", ")} WHERE id=$${index} RETURNING id, name, email, phone, role`;
+  const query = `UPDATE users SET ${fields.join(
+    ", "
+  )} WHERE id=$${index} RETURNING id, name, email, phone, role`;
   values.push(id);
 
   const result = await pool.query(query, values);
@@ -36,10 +38,20 @@ const updateUser = async (id: string, payload: Record<string, unknown>) => {
 };
 
 const deleteUser = async (id: string) => {
+  const bookingCheck = await pool.query(
+    `SELECT * FROM bookings WHERE customer_id = $1 AND status = 'active'`,
+    [id]
+  );
+
+  if (bookingCheck.rows.length > 0) {
+    throw new Error("Cannot delete user with active bookings");
+  }
+
   const result = await pool.query(
     `DELETE FROM users WHERE id=$1 RETURNING id, name, email, phone, role`,
     [id]
   );
+
   return result.rows[0];
 };
 
