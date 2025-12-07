@@ -124,7 +124,7 @@ const updateBooking = async (id: string, user: any, status: string) => {
     [status, id]
   );
 
-  // Make vehicle available
+  // change vehicle status available
   if (status === "cancelled" || status === "returned") {
     await pool.query(
       "UPDATE vehicles SET availability_status='available' WHERE id=$1",
@@ -135,7 +135,24 @@ const updateBooking = async (id: string, user: any, status: string) => {
   return updated.rows[0];
 };
 
+export const autoReturnBookings = async () => {
 
+  const res = await pool.query(`
+    UPDATE bookings 
+    SET status='returned'
+    WHERE status='active' 
+    AND rent_end_date < NOW()
+    RETURNING *
+    `);
+
+  // Update vehicle availability
+  for (const b of res.rows) {
+    await pool.query(
+      "UPDATE vehicles SET availability_status='available' WHERE id=$1",
+      [b.vehicle_id]
+    );
+  }
+};
 
 export const BookingService = {
   calculateDays,
