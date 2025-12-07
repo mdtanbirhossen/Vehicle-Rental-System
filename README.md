@@ -115,18 +115,11 @@ Create a .env file in the root directory:
 PORT=5000
 DATABASE_URL=postgresql://username:password@localhost:5432/vehicle_rental
 JWT_SECRET=your_jwt_secret_key
-BCRYPT_SALT_ROUNDS=10
 
 ```
 
-### 4. Run Database Migrations If Needed
 
-```bash
-# If using a migration tool
-npm run migrate
-```
-
-### 5. Start the Development Server
+### 4. Start the Development Server
 ```bash
 npm run dev
 ```
